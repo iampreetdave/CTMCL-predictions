@@ -1,0 +1,12 @@
+=== Premier League Odds Assignment - Accuracy Report ===
+Total Matches: 2280
+Total Correct: 1841
+Overall Accuracy: 80.75%
+
+Season-wise Breakdown:
+Season 2019-2020: Matches=380  Correct=310  Accuracy=81.58%
+Season 2020-2021: Matches=380  Correct=279  Accuracy=73.42%
+Season 2021-2022: Matches=380  Correct=298  Accuracy=78.42%
+Season 2022-2023: Matches=380  Correct=294  Accuracy=77.37%
+Season 2023-2024: Matches=380  Correct=337  Accuracy=88.68%
+Season 2024-2025: Matches=380  Correct=323  Accuracy=85.00%
