@@ -1,101 +1,79 @@
-# Premier League Odds Assignment  
+# CTMCL Predictions
 
-## 📂 Folder Contents  
-This folder contains multiple CSV files with Premier League match statistics:  
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=flat&logo=pandas&logoColor=white)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=flat&logo=scikit-learn&logoColor=white)
 
-- `Premier League Matches 2019-2020 Stats.csv`  
-- `Premier League Matches 2020-2021 Stats.csv`  
-- `Premier League Matches 2021-2022 Stats.csv`  
-- `Premier League Matches 2022-2023 Stats.csv`  
-- `Premier League Matches 2023-2024 Stats.csv`  
-- `Premier League Matches 2024-2025 Stats.csv`  
+> Analyzes Premier League seasons by calculating a Consensus Total Market Goals Line (CTMCL) from betting odds and comparing it to expected goals (xG) to predict Over/Under outcomes.
 
-Your task is to process these files, calculate a **CTMCL metric (Closing Total Market Consensus Line)**, and evaluate predictions based on it.  
+## About
 
----
+This project introduces the CTMCL (Consensus Total Market Goals Line) method — a novel approach to football match prediction. It derives a custom total goals line from over/under betting odds using linear interpolation, then compares it against pre-match xG (expected goals) data to predict whether a match will go Over or Under. The project also includes a Random Forest Classifier variant that trains on historical features for enhanced prediction accuracy. Built for sports analytics research and model evaluation across six Premier League seasons (2019–2025).
 
-## 📝 Task Instructions  
+## Tech Stack
 
-### Step 1: Columns to Use  
-From each input CSV, you will use the following columns:  
+- **Language:** Python 3
+- **Libraries:** Pandas, NumPy, scikit-learn
 
-- `date_GMT` → Date  
-- `home_team_name` → Home_Team  
-- `away_team_name` → Away_Team  
-- `Home Team Pre-Match xG` → IGHXG  
-- `Away Team Pre-Match xG` → IGAXG  
-- `total_goal_count` → Total_Goals  
-- Odds columns for interpolation:  
-  - `odds_ft_over15`  
-  - `odds_ft_over25`  
-  - `odds_ft_over35`  
-  - `odds_ft_over45`  
+## Features
 
-### Step 2: CTMCL Calculation  
-- Convert each decimal odd into **implied probability**:  
+- **CTMCL calculation** from over/under betting odds via linear interpolation at the 50% implied probability crossing
+- **xG-based prediction** — compares total implied xG against the CTMCL to determine Over/Under
+- **Random Forest Classifier** — ML model trained on xG, CTMCL, odds, and derived features
+- **Multi-season analysis** — processes six Premier League seasons (2019–2025)
+- **Accuracy reporting** — season-wise and overall accuracy breakdowns
+- **CSV output** — full processed dataset with predictions and scores
 
-  Implied Probability = 1 / (Decimal Odd)
+## Getting Started
 
-- Identify the two lines that straddle **50% probability** (e.g., Over 3.5 = 54.6% and Over 4.5 = 35.1%).  
-- Perform **linear interpolation**:  
+### Prerequisites
 
-  CTMCL = Lower Line + ((P_above - 0.5) / (P_above - P_below)) × (Higher Line - Lower Line)
+- Python 3.7+
+- pandas, numpy, scikit-learn
 
-- Example:  
-  - Over 3.5 = 54.6%  
-  - Over 4.5 = 35.1%  
-  - CTMCL ≈ 3.74 goals  
+### Installation
 
-### Step 3: Derived Columns  
-After calculating CTMCL, derive the following:  
+```bash
+git clone https://github.com/iampreetdave/CTMCL-predictions.git
+cd CTMCL-predictions
+pip install pandas numpy scikit-learn
+```
 
-- **TIGXG** = IGHXG + IGAXG  
-- **Delta** = TIGXG – CTMCL  
-- **Prediction** = "Over" if TIGXG > CTMCL else "Under"  
-- **Actual_Result** = "Over" if Total_Goals > CTMCL else "Under"  
-- **Score** = 1 if Prediction == Actual_Result else 0  
+### Run
 
-### Step 4: Final Output Columns  
-Your final processed dataset should have the following columns (in this order):  
+**Basic CTMCL analysis:**
 
-1. League (always "Premier League")  
-2. Season (extract from filename, e.g., `2019-2020`)  
-3. Date  
-4. Home_Team  
-5. Away_Team  
-6. IGHXG  
-7. IGAXG  
-8. TIGXG  
-9. CTMCL  
-10. Delta  
-11. Prediction  
-12. Total_Goals  
-13. Actual_Result  
-14. Score  
+```bash
+python ctmcl.py
+```
 
-### Step 5: Deliverables  
-1. A single merged file:  
-   - `Premier League All Seasons Processed.csv`  
-   - This should contain **all seasons combined** with the above columns.  
+**Random Forest Classifier model:**
 
-2. Accuracy report (print in terminal):  
-   - Total matches across all seasons  
-   - Correct predictions across all seasons  
-   - Overall accuracy %  
-   - Season-wise breakdown (Matches, Correct, Accuracy %)  
+```bash
+python CTMCL-ML-RFC.py
+```
 
----
+## How It Works
 
-## ✅ Expected Example Output (Format)  
+1. **Data Loading:** Reads per-season Premier League CSV files containing match stats, xG, goals, and betting odds
+2. **CTMCL Calculation:** Converts over/under odds (1.5, 2.5, 3.5, 4.5) to implied probabilities, finds the two lines that straddle 50%, and interpolates a custom total goals line
+3. **Prediction:** Compares total pre-match xG (home + away) against the CTMCL — if xG > CTMCL, predict Over; otherwise Under
+4. **ML Enhancement:** The RFC variant trains a Random Forest on engineered features (xG, CTMCL, delta, odds, home/away win odds) for binary Over/Under classification
+5. **Evaluation:** Computes accuracy per season and overall, outputs full results to CSV
 
-| League         | Season    | Date              | Home_Team         | Away_Team        | IGHXG | IGAXG | TIGXG | CTMCL  | Delta | Prediction | Total_Goals | Actual_Result | Score |  
-|----------------|-----------|-------------------|------------------|-----------------|-------|-------|-------|--------|-------|------------|-------------|---------------|-------|  
-| Premier League | 2019-2020 | Aug 09 2019 7:00pm | Liverpool        | Norwich City     | 1.83  | 1.32  | 3.15  | 3.00   | 0.15  | Over       | 5           | Over          | 1     |  
-| Premier League | 2019-2020 | Aug 10 2019 11:30am | West Ham United | Manchester City  | 0.98  | 1.87  | 2.85  | 2.90   | -0.05 | Under      | 5           | Over          | 0     |  
+## Project Structure
 
----
+```
+CTMCL-predictions/
+├── ctmcl.py                                    # Core CTMCL analysis script
+├── CTMCL-ML-RFC.py                             # Random Forest Classifier variant
+├── Premier-League-Matches-*-Stats.csv           # Season data files (2019–2025)
+├── Premier League All Seasons Processed.csv     # Output: full processed results
+├── PL_CTMC_Accuracy_Report.txt                  # Output: accuracy report
+├── PL_CTMC_FIRST2ROWS.csv                       # Output: sample preview
+└── README.md
+```
 
-## 📩 Submission  
-- Return the **processed CSV file** (`Premier League All Seasons Processed.csv`).  
-- Share the **accuracy report screenshot or log** showing total and per-season accuracy.  
-- Deadline: **End of Day**.  
+## License
+
+This project is licensed under the [MIT License](LICENSE).
